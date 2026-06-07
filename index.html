@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Плеер</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+    iframe { border: 0; width: 100vw; height: 100vh; display: block; }
+    .msg {
+      color: #ddd; font-family: system-ui, sans-serif; text-align: center;
+      padding: 24vh 16px; font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!--
+    Kodik-плеер работает только внутри iframe, поэтому кнопка «Смотреть» ведёт сюда.
+    Ссылка на embed передаётся в hash: .../index.html#https://kodikplayer.com/serial/.../720p
+    Hash не уходит на сервер — страница остаётся статичной (подходит для GitHub Pages).
+  -->
+  <div id="root" class="msg">Загрузка плеера…</div>
+  <script>
+    (function () {
+      var raw = decodeURIComponent(location.hash.slice(1) || "");
+      var root = document.getElementById("root");
+      // Разрешаем только ссылки на сам Kodik-плеер — защита от подстановки чужого src.
+      if (!/^https?:\/\/[a-z0-9.-]*kodik[a-z0-9.-]*\//i.test(raw)) {
+        root.textContent = "Ссылка на плеер не передана или некорректна.";
+        return;
+      }
+      var iframe = document.createElement("iframe");
+      iframe.src = raw;
+      iframe.setAttribute("allowfullscreen", "");
+      iframe.setAttribute("allow", "autoplay; fullscreen; encrypted-media; picture-in-picture");
+      root.replaceWith(iframe);
+    })();
+  </script>
+</body>
+</html>
